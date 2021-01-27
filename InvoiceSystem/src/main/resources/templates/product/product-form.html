@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"></head>
+<body>
+
+	<header th:replace="layout/layout :: header"></header>
+
+	<div class="container py-4">
+		<div class="card bg-light">
+			<div class="card-header" th:text="${titulo}"></div>
+			<div class="card-body">
+				<!-- <h4 class="card-title">
+					<a class="btn btn-light"
+						th:href="@{'/ver/' + ${factura.cliente.id}}"
+						th:text="'&laquo; volver'"></a>
+				</h4>
+ 				-->
+				<form th:action="@{/products/save}" th:object="${product}"
+					method="post">
+					
+					<div class="form-group row" style=" border: 5px solid black;margin-left: 60%;">
+						<div class="col-sm-12">
+							<select class="form-control" th:field="*{producttype} " name="tipo" id="tipo">
+							<option value=" ">-tipo de produto-</option>
+							<option value="S">Serviço</option>
+							<option value="P">Produto</option>
+							<option value="E">Impostos Especiais de Consumo</option>
+							<option value="T">Impostos,taxas e Encargos Parafiscais</option>
+							<option value="O">Outros</option>
+							</select>		
+						</div>
+						<div class="col-sm-12">
+							<input type="text" placeholder="categoria" name="grupo" id="grupo"
+								th:field="*{productgroup} "
+								class="form-control"/>
+						</div>
+						<div class="col-sm-12">
+							<input type="text" placeholder="unidade" name="unidade" id="unidade"
+								th:field="*{unitofmeasure} "
+								class="form-control"/>
+						</div>
+						<div class="col-sm-12">
+							<textarea rows="" cols="" th:field="*{productdescription} " 
+							class="form-control" placeholder="nome"
+							 name="desc" id="desc">
+							</textarea>
+						</div>
+						
+						<div class="col-sm-12" >
+							<input type="text" placeholder="código" name="codigo" id="codigo"
+								th:field="*{productnumbercode} "
+								class="form-control"/>
+						</div>
+						<div class="col-sm-12">
+							<select class="form-control" th:field="*{tax.taxcode} " name="tipo" id="tipo">
+							<option value=" ">-IVA-</option>
+							<option value="ISE">Isento</option>
+							<option value="NOR">Normal</option>
+							</select>		
+						</div>
+						<div class="col-sm-12">
+							<textarea rows="" cols="" th:field="*{taxexemptionreason} " 
+							 class="form-control" placeholder="razão de isensão"
+							 name="tax" id="tax">
+							</textarea>
+						</div>
+						<div class="col-sm-12">
+							<input type="text" th:field="*{taxexemptioncode} " 
+							 class="form-control" placeholder="código de isensão"
+							 name="ctax" id="ctax">
+							
+						</div>
+						<div class="col-sm-12">
+							<input type="number" min="1" th:field="*{quantity} " 
+							 class="form-control" placeholder="quantidade"
+							 name="qdade" id="qdade">
+						</div>
+						<div class="col-sm-12">
+							<input type="number" min="0.00" step="0.05" max="999999999999999999.99" th:field="*{unitprice} " 
+							 class="form-control" placeholder="preço por unidade"
+							 name="preco" id="preco">
+						</div>
+						<div class="col-sm-12">
+							<input type="number" min="0.0" step="0.01" max="100.00" th:field="*{discount} " 
+							 class="form-control" placeholder="desconto"
+							 name="desconto" id="desconto">
+						</div>
+						<div class="col-sm-6">
+							<input type="submit" value="salvar"
+								class="btn btn-secondary" />
+						</div>
+					</div>
+					<!-- 
+					<div class="form-group row">
+						<label for="descripcion" class="col-sm-2 col-form-label"
+							th:text="'Descripci�n'"></label>
+						<div class="col-sm-6">
+							<input type="text" th:field="*{descripcion}" class="form-control" th:errorclass="'form-control is-invalid'" />
+							<div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label for="observacion" class="col-sm-2 col-form-label"
+							th:text="'Observaci�n'"></label>
+						<div class="col-sm-6">
+							<textarea th:field="*{observacion}" class="form-control"></textarea>
+						</div>
+					</div>
+					-->
+					<div class="form-group row">
+						
+					</div> 
+				
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<footer th:replace="layout/layout :: footer"></footer>
+	<script th:replace="invoice/js/autocomplete-productos :: javascript"></script>
+
+</body>
+</html>

@@ -9,4 +9,6 @@ public interface CustomerRepo extends CrudRepository<Customer, Integer>{
 
 	List<Customer> findByCustomercode(String customercode);
 	Optional<Customer>  findByCustomertaxid(String companyname);
+	Optional<Customer> findByCompanyname(String companyname);
+	
 }

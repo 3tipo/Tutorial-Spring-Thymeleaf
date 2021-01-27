@@ -38,8 +38,6 @@ import com.invoice.system.repository.CustomerRepo;
 import com.invoice.system.repository.InvoiceRepo;
 import com.invoice.system.repository.ProductRepo;
 import com.invoice.system.util.criptografia.Assinatura;
-
-
 @Controller
 @RequestMapping("/invoices")
 @SessionAttributes("invoice")
@@ -67,7 +65,7 @@ public class InvoiceController {
 			NoSuchAlgorithmException, InvalidKeySpecException, SignatureException, IOException {
 			
 		if (itemId==null && cantidade==null) {
-			flash.addFlashAttribute("error", " Factura inválida");
+			flash.addFlashAttribute("error", " Factura inválida!");
 			return "redirect:/invoices/form";
 		}else {
 		for (int i = 0; i < itemId.length; i++) {
@@ -82,31 +80,31 @@ public class InvoiceController {
 			invoice.addLine(line);
 		}
 		
-		String lhash, invoicedate, sistementrydate, invoiceno, mensagem,mensagen1;
+		String lastHash, invoicedate, sistementrydate, invoiceno, mensagemAassinar,mensagenAssinadaEencriptada;
 		DecimalFormat df = new DecimalFormat("#.00");
 		
 		//CRIAR UMA CONDIÇÃO CASO NÃO ENCONTRA DADOS NA BASE DE DADOS
 
 		List<Invoice> invoices = inrepo.findByInvoicetypeAndSerieOrderByIdAsc("FT", "001");
 		if(invoices.size()>0){
-		Invoice last = invoices.get(invoices.size() - 1);
-		lhash = last.getHash();
-		int n = invoices.size() + 1;
+		Invoice lastInvoice = invoices.get(invoices.size() - 1);
+		lastHash = lastInvoice.getHash();
+		int QuantidadeDoTipodeDocumento = invoices.size() + 1;
 		String grostotal = df.format(invoice.getGrossTotal());
 
-		invoiceno = "FT" + " " + "001" + "/" + n; // a série virá da entity
+		invoiceno = "FT" + " " + "001" + "/" + QuantidadeDoTipodeDocumento; // a série virá da entity
 		invoicedate = invoice.getInvoicedate();
 		sistementrydate = invoice.getSystementrydate();
-		mensagem = invoicedate + ";" + sistementrydate + ";" + invoiceno + ";" + grostotal + ";" + lhash;
-		mensagen1 = Assinatura.Asignature(mensagem);
+		mensagemAassinar = invoicedate + ";" + sistementrydate + ";" + invoiceno + ";" + grostotal + ";" + lastHash;
+		mensagenAssinadaEencriptada = Assinatura.Asignature(mensagemAassinar);
 		
 		}else {
 			String grostotal = df.format(invoice.getGrossTotal());
 			invoiceno = "FT" + " " + "001" + "/"+1;	
 			invoicedate = invoice.getInvoicedate();
 			sistementrydate = invoice.getSystementrydate();
-			mensagem = invoicedate + ";" + sistementrydate + ";" + invoiceno + ";" + grostotal + ";";
-			mensagen1 = Assinatura.Asignature(mensagem);
+			mensagemAassinar = invoicedate + ";" + sistementrydate + ";" + invoiceno + ";" + grostotal + ";";
+			mensagenAssinadaEencriptada = Assinatura.Asignature(mensagemAassinar);
 			
 		}
 		
@@ -115,8 +113,8 @@ public class InvoiceController {
 		invoice.setSourceid("Admin");
 		invoice.setSourceid2("Admin");
 		invoice.setSourcebilling("P");
-		invoice.setHash(mensagen1);
-		invoice.setHashcontrol("1");
+		invoice.setHash(mensagenAssinadaEencriptada);
+		//invoice.setHashcontrol("1");
 		//invoice.setPeriod();
 		invoice.setInvoicetype("FT");
 		invoice.setSerie("001");
@@ -144,24 +142,26 @@ public class InvoiceController {
 				inrepo.save(invoice);
 				sesStatus.setComplete();
 			}else {	
-			c=customerRepo.findByCustomertaxid("XXXXXXXXXXX").get();
+			c=customerRepo.findByCompanyname("Consumidor final").get();
 			invoice.setCustomer(c);
 			inrepo.save(invoice);
 			sesStatus.setComplete();
 			}
 		}else {
 			long tam =customerRepo.count()+1;
-			invoice.getCustomer().setCustomercode("COS"+tam+"ER");
+			invoice.setHashcontrol(""+tam);
+			invoice.getCustomer().setSelfbillingindicatorc("0");
+			invoice.getCustomer().setCustomercode("ABC"+tam+"TRH");
 			invoice.getCustomer().setCountry("AO");
 			invoice.getCustomer().setCity("Luanda");
-			invoice.getCustomer().setAccountid(tam+"URCO"+calendar.DAY_OF_WEEK_IN_MONTH);
-			if(invoice.getCustomer().getCustomertaxid()=="") invoice.getCustomer().setCustomertaxid("XXXXXXXXXXX");
+			invoice.getCustomer().setAccountid(tam+"ATW"+calendar.DAY_OF_WEEK_IN_MONTH);
+			if(invoice.getCustomer().getCustomertaxid()=="") invoice.getCustomer().setCustomertaxid("--");
 			inrepo.save(invoice);
 			sesStatus.setComplete();
 		}
 		//inrepo.save(invoice);
 		//sesStatus.setComplete();
-		flash.addFlashAttribute("success", "Factura processada com sucesso");
+		flash.addFlashAttribute("success", "Factura processada com sucesso!");
 		return "redirect:/invoices/form";
 		}
 	}
@@ -190,7 +190,7 @@ public class InvoiceController {
 	//model.addAttribute("titulo", "Facturas");
 		return "ver";
 		}else {
-			flash.addFlashAttribute("error", " Não existe facturas");
+			flash.addFlashAttribute("error", " Não existe facturas!");
 			return "redirect:/invoices/home";
 		}
 	}
